@@ -1,25 +1,13 @@
-/**
- * A React hook for wavesurfer.js
- *
- * Usage:
- *
- * import { useWavesurfer } from '@wavesurfer/react'
- *
- * const MyComponent = () => {
- *   const containerRef = useRef<HTMLDivElement | null>(null)
- *   const wavesurfer = useWavesurfer(containerRef, { waveColor: 'violet' })
- *   return <div ref={containerRef} />
- * }
- */
-
-import { useState, useEffect, type RefObject } from 'react'
-import WaveSurfer, { type WaveSurferOptions } from 'wavesurfer.js'
+import { type RefObject, useEffect, useMemo, useState } from 'react'
+import WaveSurfer, { WaveSurferOptions } from 'wavesurfer.js'
 
 export function useWavesurfer(
   containerRef: RefObject<HTMLElement>,
   options: Partial<WaveSurferOptions>,
 ): WaveSurfer | null {
   const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null)
+  // Flatten options object to an array of keys and values to compare them deeply in the hook deps
+  const flatOptions = useMemo(() => Object.entries(options).flat(), [options])
 
   // Create a wavesurfer instance
   useEffect(() => {
@@ -35,7 +23,7 @@ export function useWavesurfer(
     return () => {
       ws.destroy()
     }
-  }, [options])
+  }, [containerRef, ...flatOptions])
 
   return wavesurfer
 }

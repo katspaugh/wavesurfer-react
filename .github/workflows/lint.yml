@@ -1,0 +1,16 @@
+name: Lint
+on: [pull_request]
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Yarn
+        shell: bash
+        run: yarn install --immutable
+
+      - uses: Maggi64/eslint-plus-action@master
+        with:
+          npmInstall: false

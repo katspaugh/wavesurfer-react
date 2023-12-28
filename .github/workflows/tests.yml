@@ -1,0 +1,21 @@
+name: Tests
+on: [pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Yarn
+        shell: bash
+        run: yarn install --immutable
+
+      - name: Tests
+        uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          skip-step: install
+          annotations: failed-tests
+          package-manager: yarn
+          test-script: yarn test:ci
+          github-token: ${{ secrets.GITHUB_TOKEN }}

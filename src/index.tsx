@@ -13,7 +13,7 @@
  * />
  */
 
-import { useMemo, useEffect, useRef, createElement, type ReactElement } from 'react'
+import { useMemo, useEffect, useRef, memo, type ReactElement } from 'react'
 import WaveSurfer, { type WaveSurferEvents, type WaveSurferOptions } from 'wavesurfer.js'
 import { useWavesurfer } from './useWavesurfer.js'
 
@@ -39,7 +39,7 @@ function useWavesurferProps(props: WavesurferProps): [PartialWavesurferOptions, 
     const allOptions = { ...props }
     const allEvents = { ...props }
 
-    for (let key in allOptions) {
+    for (const key in allOptions) {
       if (isEventProp(key)) {
         delete allOptions[key as keyof WavesurferProps]
       } else {
@@ -54,6 +54,8 @@ function useWavesurferProps(props: WavesurferProps): [PartialWavesurferOptions, 
  * Subscribe to wavesurfer events
  */
 function useWavesurferEvents(wavesurfer: WaveSurfer | null, events: OnWavesurferEvents) {
+  const flatEvents = useMemo(() => Object.entries(events).flat(), [events])
+
   // Subscribe to events
   useEffect(() => {
     if (!wavesurfer) return
@@ -72,22 +74,24 @@ function useWavesurferEvents(wavesurfer: WaveSurfer | null, events: OnWavesurfer
     return () => {
       unsubscribeFns.forEach((fn) => fn())
     }
-  }, [wavesurfer, events])
+  }, [wavesurfer, ...flatEvents])
 }
 
 /**
- * Create a wavesurfer instance
+ * Wavesurfer player component
  *
  * @see https://wavesurfer.xyz/docs/modules/wavesurfer
  */
-function WavesurferPlayer(props: WavesurferProps): ReactElement {
+function Player(props: WavesurferProps): ReactElement {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [options, events] = useWavesurferProps(props)
   const wavesurfer = useWavesurfer(containerRef, options)
   useWavesurferEvents(wavesurfer, events)
+
   // Create a container div
-  return createElement('div', { ref: containerRef })
+  return <div ref={containerRef} />
 }
 
+const WavesurferPlayer = memo(Player)
+
 export default WavesurferPlayer
-export * from './useWavesurfer.js'

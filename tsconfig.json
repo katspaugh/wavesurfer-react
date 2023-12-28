@@ -5,18 +5,19 @@
       "ESNext",
       "DOM"
     ],
-    "moduleResolution": "nodenext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "allowUmdGlobalAccess": false,
     "declaration": true,
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "jsx": "react-jsx",
     "skipLibCheck": true
   },
   "exclude": [
     "node_modules",
-    "cypress",
     "dist"
   ]
 }
