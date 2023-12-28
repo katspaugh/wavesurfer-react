@@ -1,0 +1,11 @@
+{
+  "name": "wavesurfer.js/react",
+  "version": "1.0.0",
+  "description": "React wrapper for wavesurfer.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "katspaugh",
+  "license": "BSD-3-Clause"
+}
