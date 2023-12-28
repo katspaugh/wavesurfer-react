@@ -1,8 +1,13 @@
 {
   "name": "@wavesurfer/react",
   "version": "1.0.0",
-  "description": "React wrapper for wavesurfer.js",
-  "main": "dist/index.js",
+  "description": "React component for wavesurfer.js",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
   "scripts": {
     "build": "rollup -c",
