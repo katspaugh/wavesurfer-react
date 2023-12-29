@@ -20,7 +20,7 @@ jobs:
       - name: Extract version
         id: version
         run: |
-          OLD_VERSION=$(npm show 'wavesurfer@/react' version)
+          OLD_VERSION=$(npm show . version)
           NEW_VERSION=$(node -p 'require("./package.json").version')
           if [ $NEW_VERSION != $OLD_VERSION ]; then
             echo "New version $NEW_VERSION detected"

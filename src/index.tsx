@@ -15,7 +15,7 @@
 
 import { useMemo, useEffect, useRef, memo, type ReactElement } from 'react'
 import WaveSurfer, { type WaveSurferEvents, type WaveSurferOptions } from 'wavesurfer.js'
-import { useWavesurfer } from './useWavesurfer.js'
+import { useWavesurferInstance } from './useWavesurfer.js'
 
 type WavesurferEventHandler<T extends unknown[]> = (wavesurfer: WaveSurfer, ...args: T) => void
 
@@ -85,7 +85,7 @@ function useWavesurferEvents(wavesurfer: WaveSurfer | null, events: OnWavesurfer
 function Player(props: WavesurferProps): ReactElement {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [options, events] = useWavesurferProps(props)
-  const wavesurfer = useWavesurfer(containerRef, options)
+  const wavesurfer = useWavesurferInstance(containerRef, options)
   useWavesurferEvents(wavesurfer, events)
 
   // Create a container div
@@ -95,3 +95,5 @@ function Player(props: WavesurferProps): ReactElement {
 const WavesurferPlayer = memo(Player)
 
 export default WavesurferPlayer
+
+export * from './useWavesurfer'
