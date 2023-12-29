@@ -12,7 +12,12 @@ export default [
       file: 'dist/index.js',
       format: 'esm',
     },
-    plugins: [typescript(), terser()],
+    plugins: [
+      typescript({
+        exclude: ['dist', 'examples'],
+      }),
+      terser(),
+    ],
   },
 
   // Examples

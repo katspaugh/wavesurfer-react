@@ -13,9 +13,8 @@
  * />
  */
 
-import { useMemo, useEffect, useRef, memo, type ReactElement } from 'react'
+import { useState, useMemo, useEffect, useRef, memo, type ReactElement, type RefObject } from 'react'
 import WaveSurfer, { type WaveSurferEvents, type WaveSurferOptions } from 'wavesurfer.js'
-import { useWavesurferInstance } from './useWavesurfer.js'
 
 type WavesurferEventHandler<T extends unknown[]> = (wavesurfer: WaveSurfer, ...args: T) => void
 
@@ -24,10 +23,103 @@ type OnWavesurferEvents = {
 }
 
 type PartialWavesurferOptions = Omit<WaveSurferOptions, 'container'>
+
+/**
+ * Props for the Wavesurfer component
+ * @public
+ */
 export type WavesurferProps = PartialWavesurferOptions & OnWavesurferEvents
+
+/**
+ * Use wavesurfer instance
+ */
+function useWavesurferInstance(
+  containerRef: RefObject<HTMLElement>,
+  options: Partial<WaveSurferOptions>,
+): WaveSurfer | null {
+  const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null)
+  // Flatten options object to an array of keys and values to compare them deeply in the hook deps
+  const flatOptions = useMemo(() => Object.entries(options).flat(), [options])
+
+  // Create a wavesurfer instance
+  useEffect(() => {
+    if (!containerRef.current) return
+
+    const ws = WaveSurfer.create({
+      ...options,
+      container: containerRef.current,
+    })
+
+    setWavesurfer(ws)
+
+    return () => {
+      ws.destroy()
+    }
+  }, [containerRef, ...flatOptions])
+
+  return wavesurfer
+}
+
+/**
+ * Use wavesurfer state
+ */
+function useWavesurferState(wavesurfer: WaveSurfer | null): {
+  isReady: boolean
+  isPlaying: boolean
+  currentTime: number
+} {
+  const [isReady, setIsReady] = useState<boolean>(false)
+  const [isPlaying, setIsPlaying] = useState<boolean>(false)
+  const [currentTime, setCurrentTime] = useState<number>(0)
+
+  useEffect(() => {
+    if (!wavesurfer) return
+
+    const unsubscribeFns = [
+      wavesurfer.on('load', () => {
+        setIsReady(false)
+        setIsPlaying(false)
+        setCurrentTime(0)
+      }),
+
+      wavesurfer.on('ready', () => {
+        setIsReady(true)
+        setIsPlaying(false)
+        setCurrentTime(0)
+      }),
+
+      wavesurfer.on('play', () => {
+        setIsPlaying(true)
+      }),
+
+      wavesurfer.on('pause', () => {
+        setIsPlaying(false)
+      }),
+
+      wavesurfer.on('destroy', () => {
+        setIsReady(false)
+        setIsPlaying(false)
+      }),
+    ]
+
+    return () => {
+      unsubscribeFns.forEach((fn) => fn())
+    }
+  }, [wavesurfer])
+
+  return useMemo(
+    () => ({
+      isReady,
+      isPlaying,
+      currentTime,
+    }),
+    [isPlaying, currentTime],
+  )
+}
 
 const EVENT_PROP_RE = /^on([A-Z])/
 const isEventProp = (key: string) => EVENT_PROP_RE.test(key)
+const getEventName = (key: string) => key.replace(EVENT_PROP_RE, (_, $1) => $1.toLowerCase()) as keyof WaveSurferEvents
 
 /**
  * Parse props into wavesurfer options and events
@@ -64,8 +156,7 @@ function useWavesurferEvents(wavesurfer: WaveSurfer | null, events: OnWavesurfer
     if (!eventEntries.length) return
 
     const unsubscribeFns = eventEntries.map(([name, handler]) => {
-      const event = name.replace(EVENT_PROP_RE, (_, $1) => $1.toLowerCase()) as keyof WaveSurferEvents
-
+      const event = getEventName(name)
       return wavesurfer.on(event, (...args) =>
         (handler as WavesurferEventHandler<WaveSurferEvents[typeof event]>)(wavesurfer, ...args),
       )
@@ -79,10 +170,10 @@ function useWavesurferEvents(wavesurfer: WaveSurfer | null, events: OnWavesurfer
 
 /**
  * Wavesurfer player component
- *
  * @see https://wavesurfer.xyz/docs/modules/wavesurfer
+ * @public
  */
-function Player(props: WavesurferProps): ReactElement {
+const WavesurferPlayer = memo((props: WavesurferProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [options, events] = useWavesurferProps(props)
   const wavesurfer = useWavesurferInstance(containerRef, options)
@@ -90,10 +181,44 @@ function Player(props: WavesurferProps): ReactElement {
 
   // Create a container div
   return <div ref={containerRef} />
-}
+})
 
-const WavesurferPlayer = memo(Player)
-
+/**
+ * @public
+ */
 export default WavesurferPlayer
 
-export * from './useWavesurfer'
+/**
+ * React hook for wavesurfer.js
+ *
+ * ```
+ * import { useWavesurfer } from '@wavesurfer/react'
+ *
+ * const App = () => {
+ *   const containerRef = useRef<HTMLDivElement | null>(null)
+ *
+ *   const { wavesurfer, isReady, isPlaying, currentTime } = useWavesurfer({
+ *     container: containerRef,
+ *     url: '/my-server/audio.ogg',
+ *     waveColor: 'purple',
+ *     height: 100',
+ *   })
+ *
+ *   return <div ref={containerRef} />
+ * }
+ * ```
+ *
+ * @public
+ */
+export function useWavesurfer({
+  container,
+  ...options
+}: Omit<WaveSurferOptions, 'container'> & { container: RefObject<HTMLElement> }): ReturnType<
+  typeof useWavesurferState
+> & {
+  wavesurfer: ReturnType<typeof useWavesurferInstance>
+} {
+  const wavesurfer = useWavesurferInstance(container, options)
+  const state = useWavesurferState(wavesurfer)
+  return useMemo(() => ({ ...state, wavesurfer }), [state, wavesurfer])
+}
