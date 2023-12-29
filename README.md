@@ -1,5 +1,7 @@
 # @wavesurfer/react
 
+[![npm](https://img.shields.io/npm/v/@wavesurfer/react)](https://www.npmjs.com/package/@wavesurfer/react)
+
 A React component for [wavesurfer.js](http://github.com/katspaugh/wavesurfer.js).
 
 It makes it easy to use wavesurfer from React. All of the familiar [wavesurfer options](https://wavesurfer.xyz/docs/types/wavesurfer.WaveSurferOptions) become React props.

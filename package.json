@@ -3,7 +3,8 @@
   "version": "1.0.1",
   "description": "React component for wavesurfer.js",
   "files": [
-    "dist"
+    "dist/index.js",
+    "dist/index.d.ts"
   ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
