@@ -2,6 +2,18 @@
   "name": "@wavesurfer/react",
   "version": "1.0.1",
   "description": "React component for wavesurfer.js",
+  "homepage": "https://wavesurfer.xyz",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:katspaugh/wavesurfer-react.git"
+  },
+  "keywords": [
+    "wavesurfer",
+    "react",
+    "audio",
+    "waveform",
+    "player"
+  ],
   "files": [
     "dist/index.js",
     "dist/index.d.ts"
