@@ -96,6 +96,10 @@ function useWavesurferState(wavesurfer: WaveSurfer | null): {
         setIsPlaying(false)
       }),
 
+      wavesurfer.on('timeupdate', () => {
+        setCurrentTime(wavesurfer.getCurrentTime())
+      }),
+
       wavesurfer.on('destroy', () => {
         setIsReady(false)
         setIsPlaying(false)
