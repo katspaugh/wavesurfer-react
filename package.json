@@ -1,6 +1,6 @@
 {
   "name": "@wavesurfer/react",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "React component for wavesurfer.js",
   "homepage": "https://wavesurfer.xyz",
   "repository": {
