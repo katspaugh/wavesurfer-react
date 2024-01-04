@@ -16,10 +16,5 @@
     "jsx": "react-jsx",
     "skipLibCheck": true,
     "removeComments": false
-  },
-  "exclude": [
-    "node_modules",
-    "examples",
-    "dist"
-  ]
+  }
 }

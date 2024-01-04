@@ -24,7 +24,8 @@
   "typings": "./dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc && rollup -c",
+    "build": "rollup -c",
+    "build:examples": "cd examples && rollup -c",
     "lint": "eslint src",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests",
     "test:ci": "yarn test --ci --silent --coverage --json --watchAll=false --testLocationInResults --outputFile=report.json",
