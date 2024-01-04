@@ -3713,10 +3713,10 @@ walker@^1.0.8:
   dependencies:
     makeerror "1.0.12"
 
-wavesurfer.js@^7.6.0:
-  version "7.6.0"
-  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-7.6.0.tgz#19b40f3bd6d05ce53d828d237507bd97f403d973"
-  integrity sha512-fRGgzdr7QfWuiELWHuaoiXO3WXhBTejBSX6ca41onLmbvEexFWbNRX89aeHDLF+72Gcd5NLqFjxt/0Pc808JBQ==
+wavesurfer.js@^7.6.1:
+  version "7.6.1"
+  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-7.6.1.tgz#fb7fd49c57e2e19cd3e1c6f0a05870231ec369ce"
+  integrity sha512-KMEkVTgzMSV2KSmdpmdgDBiGpnaa2kFka6gT3oD4hBijnggKOkKZulVDxXelWpJkN9jCYfUpeqFcPM+VC4SBAw==
 
 webidl-conversions@^7.0.0:
   version "7.0.0"
