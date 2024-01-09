@@ -36,7 +36,7 @@
   "license": "BSD-3-Clause",
   "peerDependencies": {
     "react": "^18.2.0",
-    "wavesurfer.js": "^7.6.1"
+    "wavesurfer.js": "^7.6.3"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
