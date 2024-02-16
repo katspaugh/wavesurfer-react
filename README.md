@@ -72,7 +72,7 @@ const App = () => {
     container: containerRef,
     url: '/my-server/audio.ogg',
     waveColor: 'purple',
-    height: 100',
+    height: 100,
   })
 
   const onPlayPause = () => {
