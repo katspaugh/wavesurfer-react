@@ -117,7 +117,7 @@ function useWavesurferState(wavesurfer: WaveSurfer | null): {
       isPlaying,
       currentTime,
     }),
-    [isPlaying, currentTime],
+    [isPlaying, currentTime, isReady],
   )
 }
 
