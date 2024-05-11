@@ -1,7 +1,7 @@
 {
   "name": "@wavesurfer/react",
-  "version": "1.0.5",
-  "description": "React component for wavesurfer.js",
+  "version": "1.0.6",
+  "description": "React component and hook for wavesurfer.js",
   "homepage": "https://wavesurfer.xyz",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
   "license": "BSD-3-Clause",
   "peerDependencies": {
     "react": "^18.2.0",
-    "wavesurfer.js": "^7.6.3"
+    "wavesurfer.js": ">=7.7.14"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
