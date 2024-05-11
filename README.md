@@ -2,22 +2,22 @@
 
 [![npm](https://img.shields.io/npm/v/@wavesurfer/react)](https://www.npmjs.com/package/@wavesurfer/react)
 
-A React component for [wavesurfer.js](http://github.com/katspaugh/wavesurfer.js).
+A React component and hook for [wavesurfer.js](http://github.com/katspaugh/wavesurfer.js).
 
 It makes it easy to use wavesurfer from React. All of the familiar [wavesurfer options](https://wavesurfer.xyz/docs/types/wavesurfer.WaveSurferOptions) become React props.
 
-You can subscribe to various [wavesurfer events](https://wavesurfer.xyz/docs/types/wavesurfer.WaveSurferEvents) also via props. Just prepend an event name with on, e.g. ready -> onReady. Each event receives a wavesurfer instance as the first argument.
+You can subscribe to various [wavesurfer events](https://wavesurfer.xyz/docs/types/wavesurfer.WaveSurferEvents) also via props. Just prepend an event name with on, e.g. `ready` -> `onReady`. Each event callback receives a wavesurfer instance as the first argument.
 
 ## Installation
 
 With yarn:
 ```bash
-yarn add @wavesurfer/react
+yarn add wavesurfer.js @wavesurfer/react
 ```
 
 With npm:
 ```bash
-npm install @wavesurfer/react
+npm install wavesurfer.js @wavesurfer/react
 ```
 
 ## Usage
@@ -83,9 +83,9 @@ const App = () => {
     <>
       <div ref={containerRef} />
 
-     <button onClick={onPlayPause}>
-       {isPlaying ? 'Pause' : 'Play'}
-     </button>
+      <button onClick={onPlayPause}>
+        {isPlaying ? 'Pause' : 'Play'}
+      </button>
     </>
   )
 }
