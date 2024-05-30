@@ -66,7 +66,7 @@ import { useRef } from 'react'
 import { useWavesurfer } from '@wavesurfer/react'
 
 const App = () => {
-  const containerRef = useRef()
+  const containerRef = useRef(null)
 
   const { wavesurfer, isReady, isPlaying, currentTime } = useWavesurfer({
     container: containerRef,
