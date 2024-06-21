@@ -172,6 +172,20 @@ function useWavesurferEvents(wavesurfer: WaveSurfer | null, events: OnWavesurfer
   }, [wavesurfer, ...flatEvents])
 }
 
+function useWavesurferLoad(
+  wavesurfer: WaveSurfer | null,
+  url: string | undefined,
+  peaks: (Float32Array | number[])[] | undefined,
+  duration: number | undefined,
+) {
+  useEffect(() => {
+    if (!wavesurfer) return
+    if (!url) return
+
+    wavesurfer.load(url, peaks, duration)
+  }, [wavesurfer, url, peaks, duration])
+}
+
 /**
  * Wavesurfer player component
  * @see https://wavesurfer.xyz/docs/modules/wavesurfer
@@ -179,9 +193,10 @@ function useWavesurferEvents(wavesurfer: WaveSurfer | null, events: OnWavesurfer
  */
 const WavesurferPlayer = memo((props: WavesurferProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const [options, events] = useWavesurferProps(props)
+  const [{ url, peaks, duration, ...options}, events] = useWavesurferProps(props)
   const wavesurfer = useWavesurferInstance(containerRef, options)
   useWavesurferEvents(wavesurfer, events)
+  useWavesurferLoad(wavesurfer, url, peaks, duration)
 
   // Create a container div
   return <div ref={containerRef} />
