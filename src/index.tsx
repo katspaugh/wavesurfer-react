@@ -193,7 +193,7 @@ function useWavesurferLoad(
  */
 const WavesurferPlayer = memo((props: WavesurferProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const [{ url, peaks, duration, ...options}, events] = useWavesurferProps(props)
+  const [{ url, peaks, duration, ...options }, events] = useWavesurferProps(props)
   const wavesurfer = useWavesurferInstance(containerRef, options)
   useWavesurferEvents(wavesurfer, events)
   useWavesurferLoad(wavesurfer, url, peaks, duration)

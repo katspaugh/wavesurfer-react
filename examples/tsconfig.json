@@ -15,6 +15,7 @@
     "strict": true,
     "jsx": "react-jsx",
     "skipLibCheck": true,
+    "resolveJsonModule": true,
     "removeComments": false
   }
 }
