@@ -38,14 +38,14 @@ describe('@wavesurfer/react tests', () => {
   })
 
   it('should render wavesurfer with events', (done) => {
-    const props = { url: 'test.mp3', waveColor: 'purple' }
+    const { url, peaks, duration, ...props } = { url: 'test.mp3', waveColor: 'purple' }
 
     const onReady = (wavesurfer) => {
       expect(wavesurfer).toBeInstanceOf(WaveSurfer)
       done()
     }
 
-    render(React.createElement(WavesurferPlayer, { ...props, onReady }))
+    render(React.createElement(WavesurferPlayer, { url, peaks, duration, ...props, onReady }))
 
     expect(WaveSurfer.create).toHaveBeenCalledWith({
       ...props,
