@@ -52,7 +52,7 @@ jobs:
       - uses: actions/setup-node@v3
         if: ${{ steps.version.outputs.version }}
         with:
-          node-version: '16.x'
+          node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
