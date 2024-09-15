@@ -13,7 +13,7 @@
  * />
  */
 
-import { useState, useMemo, useEffect, useRef, memo, type ReactElement, type RefObject } from 'react'
+import { memo, useEffect, useMemo, useRef, useState, type ReactElement, type RefObject } from 'react'
 import WaveSurfer, { type WaveSurferEvents, type WaveSurferOptions } from 'wavesurfer.js'
 
 type WavesurferEventHandler<T extends unknown[]> = (wavesurfer: WaveSurfer, ...args: T) => void
@@ -38,8 +38,8 @@ function useWavesurferInstance(
   options: Partial<WaveSurferOptions>,
 ): WaveSurfer | null {
   const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null)
-  // Flatten options object to an array of keys and values to compare them deeply in the hook deps
-  const flatOptions = useMemo(() => Object.entries(options).flat(), [options])
+  // Serialize options object to an array of keys and values to compare them deeply in the hook deps
+  const serialOptions = useMemo(() => Object.entries(options).flat().toString(), [options])
 
   // Create a wavesurfer instance
   useEffect(() => {
@@ -55,7 +55,7 @@ function useWavesurferInstance(
     return () => {
       ws.destroy()
     }
-  }, [containerRef, ...flatOptions])
+  }, [containerRef, ...serialOptions])
 
   return wavesurfer
 }
