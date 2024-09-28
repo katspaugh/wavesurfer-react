@@ -208,7 +208,7 @@ export default WavesurferPlayer
  * const App = () => {
  *   const containerRef = useRef<HTMLDivElement | null>(null)
  *
- *   const { wavesurfer, isReady, isPlaying, currentTime } = useWavesurfer({
+ *   const { wavesurfer, isReady, isPlaying, hasFinished, currentTime } = useWavesurfer({
  *     container: containerRef,
  *     url: '/my-server/audio.ogg',
  *     waveColor: 'purple',
