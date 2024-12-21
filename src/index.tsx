@@ -217,7 +217,7 @@ export default WavesurferPlayer
 export function useWavesurfer({
   container,
   ...options
-}: Omit<WaveSurferOptions, 'container'> & { container: RefObject<HTMLDivElement> }): ReturnType<
+}: Omit<WaveSurferOptions, 'container'> & { container: RefObject<HTMLDivElement | null> }): ReturnType<
   typeof useWavesurferState
 > & {
   wavesurfer: ReturnType<typeof useWavesurferInstance>

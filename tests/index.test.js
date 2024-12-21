@@ -20,11 +20,21 @@ describe('@wavesurfer/react tests', () => {
         this.emit('ready')
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      MockWaveSurfer.prototype.destroy = function () {}
+      MockWaveSurfer.prototype.destroy = function () {
+        this.listeners = {}
+      }
 
       return new MockWaveSurfer(...args)
     })
+  })
+
+  it('should properly cleanup on unmount', () => {
+    const { unmount } = render(React.createElement(WavesurferPlayer, { waveColor: 'purple' }))
+    const mockInstance = WaveSurfer.create.mock.results[0].value
+    const destroySpy = jest.spyOn(mockInstance, 'destroy')
+
+    unmount()
+    expect(destroySpy).toHaveBeenCalled()
   })
 
   it('should render wavesurfer with basic options', () => {
