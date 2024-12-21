@@ -20,6 +20,7 @@ describe('@wavesurfer/react tests', () => {
         this.emit('ready')
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       MockWaveSurfer.prototype.destroy = function () {}
 
       return new MockWaveSurfer(...args)

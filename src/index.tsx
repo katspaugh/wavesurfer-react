@@ -34,7 +34,7 @@ export type WavesurferProps = PartialWavesurferOptions & OnWavesurferEvents
  * Use wavesurfer instance
  */
 function useWavesurferInstance(
-  containerRef: RefObject<HTMLElement>,
+  containerRef: RefObject<HTMLDivElement | null>,
   options: Partial<WaveSurferOptions>,
 ): WaveSurfer | null {
   const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null)
@@ -43,7 +43,7 @@ function useWavesurferInstance(
 
   // Create a wavesurfer instance
   useEffect(() => {
-    if (!containerRef.current) return
+    if (!containerRef?.current) return
 
     const ws = WaveSurfer.create({
       ...options,
@@ -217,7 +217,7 @@ export default WavesurferPlayer
 export function useWavesurfer({
   container,
   ...options
-}: Omit<WaveSurferOptions, 'container'> & { container: RefObject<HTMLElement> }): ReturnType<
+}: Omit<WaveSurferOptions, 'container'> & { container: RefObject<HTMLDivElement> }): ReturnType<
   typeof useWavesurferState
 > & {
   wavesurfer: ReturnType<typeof useWavesurferInstance>
