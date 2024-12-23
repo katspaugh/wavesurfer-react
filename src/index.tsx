@@ -70,6 +70,7 @@ function useWavesurferState(wavesurfer: WaveSurfer | null): {
 } {
   const [isReady, setIsReady] = useState<boolean>(false)
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
+  const [hasFinished, setHasFinished] = useState<boolean>(false)
   const [currentTime, setCurrentTime] = useState<number>(0)
 
   useEffect(() => {
@@ -85,7 +86,12 @@ function useWavesurferState(wavesurfer: WaveSurfer | null): {
       wavesurfer.on('ready', () => {
         setIsReady(true)
         setIsPlaying(false)
+        setHasFinished(false)
         setCurrentTime(0)
+      }),
+
+      wavesurfer.on('finish', () => {
+        setHasFinished(true)
       }),
 
       wavesurfer.on('play', () => {
@@ -115,9 +121,10 @@ function useWavesurferState(wavesurfer: WaveSurfer | null): {
     () => ({
       isReady,
       isPlaying,
+      hasFinished,
       currentTime,
     }),
-    [isPlaying, currentTime, isReady],
+    [isPlaying, hasFinished, currentTime, isReady],
   )
 }
 
@@ -201,7 +208,7 @@ export default WavesurferPlayer
  * const App = () => {
  *   const containerRef = useRef<HTMLDivElement | null>(null)
  *
- *   const { wavesurfer, isReady, isPlaying, currentTime } = useWavesurfer({
+ *   const { wavesurfer, isReady, isPlaying, hasFinished, currentTime } = useWavesurfer({
  *     container: containerRef,
  *     url: '/my-server/audio.ogg',
  *     waveColor: 'purple',
