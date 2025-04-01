@@ -3364,9 +3364,9 @@ walker@^1.0.8:
     makeerror "1.0.12"
 
 wavesurfer.js@^7.8.11:
-  version "7.8.11"
-  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-7.8.11.tgz#542587fd930a9ccd801e0c98d3f137e13b19d86c"
-  integrity sha512-bZs7A0vtTVOhuPoDGOXVevAIm+KVYBGwddjL9AeOS7kp/oPcVH9hQWQyR2rBAAfN6s0BKI+EdPEalkNaOmkA6A==
+  version "7.9.4"
+  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-7.9.4.tgz#fab2e52a4bf8e256f6f13dd85cdfed2bc7487d7d"
+  integrity sha512-ahOMvrOKo5jULNnXq8Ske8v/ZStoNNTDjYohvgLNerUFuh+6fJSt7wlxFesEXmnlcTnjMy5/tIzhn9KusjO6bg==
 
 webidl-conversions@^7.0.0:
   version "7.0.0"
