@@ -190,8 +190,12 @@ const WavesurferPlayer = memo((props: WavesurferProps): ReactElement => {
   const wavesurfer = useWavesurferInstance(containerRef, options)
   useWavesurferEvents(wavesurfer, events)
 
+  const style = {
+    ...(options.height == 'auto' && { height: '100%' }),
+  }
+
   // Create a container div
-  return <div ref={containerRef} />
+  return <div style={style} ref={containerRef} />
 })
 
 /**
