@@ -91,6 +91,104 @@ const App = () => {
 }
 ```
 
+## Using plugins
+
+Wavesurfer [plugins](https://wavesurfer.xyz/docs/modules/plugins_index) can be passed in the `plugins` option.
+
+**Important:** The `plugins` array **must be memoized** using `useMemo` or defined outside the component. This is because wavesurfer.js mutates plugin instances during initialization, and passing a new array on every render will cause errors.
+
+### Basic example with a single plugin
+
+```js
+import { useMemo } from 'react'
+import WavesurferPlayer from '@wavesurfer/react'
+import Timeline from 'wavesurfer.js/dist/plugins/timeline.esm.js'
+
+const App = () => {
+  const plugins = useMemo(() => {
+    return [
+      Timeline.create({
+        container: '#timeline',
+      }),
+    ]
+  }, [])
+
+  return (
+    <>
+      <WavesurferPlayer
+        height={100}
+        waveColor="violet"
+        url="/audio.wav"
+        plugins={plugins}
+      />
+      <div id="timeline" />
+    </>
+  )
+}
+```
+
+### Example with multiple plugins
+
+```js
+import { useMemo } from 'react'
+import WavesurferPlayer from '@wavesurfer/react'
+import Timeline from 'wavesurfer.js/dist/plugins/timeline.esm.js'
+import Regions from 'wavesurfer.js/dist/plugins/regions.esm.js'
+
+const App = () => {
+  const plugins = useMemo(() => {
+    return [
+      Timeline.create({
+        container: '#timeline',
+      }),
+      Regions.create(),
+    ]
+  }, [])
+
+  return (
+    <>
+      <WavesurferPlayer
+        height={100}
+        waveColor="violet"
+        url="/audio.wav"
+        plugins={plugins}
+      />
+      <div id="timeline" />
+    </>
+  )
+}
+```
+
+### Alternative: Define plugins outside the component
+
+If your plugins don't depend on component props or state, you can define them outside:
+
+```js
+import WavesurferPlayer from '@wavesurfer/react'
+import Timeline from 'wavesurfer.js/dist/plugins/timeline.esm.js'
+
+// Define plugins outside the component
+const plugins = [
+  Timeline.create({
+    container: '#timeline',
+  }),
+]
+
+const App = () => {
+  return (
+    <>
+      <WavesurferPlayer
+        height={100}
+        waveColor="violet"
+        url="/audio.wav"
+        plugins={plugins}
+      />
+      <div id="timeline" />
+    </>
+  )
+}
+```
+
 ## Docs
 
 https://wavesurfer.xyz

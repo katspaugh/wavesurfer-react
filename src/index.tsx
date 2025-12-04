@@ -38,15 +38,22 @@ function useWavesurferInstance(
   options: Partial<WaveSurferOptions>,
 ): WaveSurfer | null {
   const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null)
+  
   // Flatten options object to an array of keys and values to compare them deeply in the hook deps
-  const flatOptions = useMemo(() => Object.entries(options).flat(), [options])
+  // Exclude plugins from deep comparison since they are mutated during initialization
+  const optionsWithoutPlugins = useMemo(() => {
+    const { plugins, ...rest } = options
+    return rest
+  }, [options])
+  const flatOptions = useMemo(() => Object.entries(optionsWithoutPlugins).flat(), [optionsWithoutPlugins])
 
   // Create a wavesurfer instance
   useEffect(() => {
     if (!containerRef?.current) return
 
     const ws = WaveSurfer.create({
-      ...options,
+      ...optionsWithoutPlugins,
+      plugins: options.plugins,
       container: containerRef.current,
     })
 
@@ -55,7 +62,9 @@ function useWavesurferInstance(
     return () => {
       ws.destroy()
     }
-  }, [containerRef, ...flatOptions])
+    // Only recreate if plugins array reference changes (not on mutation)
+    // Users should memoize the plugins array to prevent unnecessary re-creation
+  }, [containerRef, options.plugins, ...flatOptions])
 
   return wavesurfer
 }
