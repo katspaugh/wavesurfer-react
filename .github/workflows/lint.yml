@@ -1,6 +1,10 @@
 name: Lint
 on: [pull_request]
 
+permissions:
+  checks: write
+  pull-requests: write
+
 jobs:
   eslint:
     runs-on: ubuntu-latest
