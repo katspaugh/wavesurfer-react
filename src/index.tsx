@@ -38,10 +38,11 @@ function useWavesurferInstance(
   options: Partial<WaveSurferOptions>,
 ): WaveSurfer | null {
   const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null)
-  
+
   // Flatten options object to an array of keys and values to compare them deeply in the hook deps
   // Exclude plugins from deep comparison since they are mutated during initialization
   const optionsWithoutPlugins = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { plugins, ...rest } = options
     return rest
   }, [options])
