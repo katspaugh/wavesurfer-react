@@ -30,22 +30,32 @@ type PartialWavesurferOptions = Omit<WaveSurferOptions, 'container'>
  */
 export type WavesurferProps = PartialWavesurferOptions & OnWavesurferEvents
 
+const isPlainObject = (value: unknown): value is Record<string, unknown> => {
+  if (value === null || typeof value !== 'object') return false
+  const proto = Object.getPrototypeOf(value)
+  return proto === Object.prototype || proto === null
+}
 
-/** Flatten nested plain option values so effect deps compare by value, not object identity. */
-function flattenOptionEntries(value: unknown, path = ''): unknown[] {
-  if (value !== null && typeof value === 'object') {
-    if (Array.isArray(value)) {
-      return value.flatMap((item, index) => flattenOptionEntries(item, path ? `${path}.${index}` : String(index)))
-    }
-    // Plain objects only — leave class instances / DOM nodes / functions as opaque refs
-    const proto = Object.getPrototypeOf(value)
-    if (proto === Object.prototype || proto === null) {
-      return Object.entries(value as Record<string, unknown>).flatMap(([key, nested]) =>
-        flattenOptionEntries(nested, path ? `${path}.${key}` : key),
-      )
-    }
+/** Deep-compare plain objects and arrays; anything else (functions, DOM nodes, class instances) by identity. */
+function isDeepEqual(a: unknown, b: unknown): boolean {
+  if (Object.is(a, b)) return true
+  if (Array.isArray(a) && Array.isArray(b)) {
+    return a.length === b.length && a.every((item, i) => isDeepEqual(item, b[i]))
   }
-  return path ? [path, value] : [value]
+  if (isPlainObject(a) && isPlainObject(b)) {
+    const keys = Object.keys(a)
+    return keys.length === Object.keys(b).length && keys.every((key) => key in b && isDeepEqual(a[key], b[key]))
+  }
+  return false
+}
+
+/** Returns a number that changes only when `value` stops being deep-equal to the previous one. */
+function useDeepVersion(value: unknown): number {
+  const ref = useRef({ value, version: 0 })
+  if (!isDeepEqual(ref.current.value, value)) {
+    ref.current = { value, version: ref.current.version + 1 }
+  }
+  return ref.current.version
 }
 
 /**
@@ -64,12 +74,9 @@ function useWavesurferInstance(
     const { plugins, ...rest } = options
     return rest
   }, [options])
-  // Deep-flatten nested option values (e.g. fetchParams) so identity-unstable
-  // plain objects do not recreate the player every render (#4226).
-  const flatOptions = useMemo(
-    () => Object.entries(optionsWithoutPlugins).flatMap(([key, value]) => flattenOptionEntries(value, key)),
-    [optionsWithoutPlugins],
-  )
+  // A single stable dep that bumps only when nested option values actually change,
+  // so inline objects/arrays (e.g. fetchParams, peaks) don't recreate the player every render (#4226).
+  const optionsVersion = useDeepVersion(optionsWithoutPlugins)
 
   // Create a wavesurfer instance
   useEffect(() => {
@@ -88,7 +95,8 @@ function useWavesurferInstance(
     }
     // Only recreate if plugins array reference changes (not on mutation)
     // Users should memoize the plugins array to prevent unnecessary re-creation
-  }, [containerRef, options.plugins, ...flatOptions])
+    // optionsWithoutPlugins is read via optionsVersion, which tracks its deep value
+  }, [containerRef, options.plugins, optionsVersion])
 
   return wavesurfer
 }

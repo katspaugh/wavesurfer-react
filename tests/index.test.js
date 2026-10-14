@@ -138,4 +138,40 @@ describe('@wavesurfer/react tests', () => {
     expect(WaveSurfer.create.mock.calls.length).toBe(createsAfterMount)
   })
 
+  describe('nested option leaf changes recreate the player', () => {
+    function renderWithPeaks(initial) {
+      const { rerender } = render(React.createElement(WavesurferPlayer, { waveColor: 'purple', peaks: initial }))
+      const before = WaveSurfer.create.mock.calls.length
+      return {
+        update: (peaks) => rerender(React.createElement(WavesurferPlayer, { waveColor: 'purple', peaks })),
+        creates: () => WaveSurfer.create.mock.calls.length - before,
+      }
+    }
+
+    it('detects an appended nested leaf', () => {
+      const { update, creates } = renderWithPeaks([[0.1]])
+      update([[0.1, 0.2]])
+      expect(creates()).toBe(1)
+      expect(WaveSurfer.create.mock.lastCall[0].peaks).toEqual([[0.1, 0.2]])
+    })
+
+    it('detects a removed nested leaf', () => {
+      const { update, creates } = renderWithPeaks([[0.1, 0.2]])
+      update([[0.1]])
+      expect(creates()).toBe(1)
+    })
+
+    it('detects a changed nested leaf', () => {
+      const { update, creates } = renderWithPeaks([[0.1, 0.2]])
+      update([[0.1, 0.3]])
+      expect(creates()).toBe(1)
+    })
+
+    it('does not recreate for an equal fresh nested array', () => {
+      const { update, creates } = renderWithPeaks([[0.1, 0.2]])
+      update([[0.1, 0.2]])
+      expect(creates()).toBe(0)
+    })
+  })
+
 })
