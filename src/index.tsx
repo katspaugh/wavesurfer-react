@@ -30,6 +30,24 @@ type PartialWavesurferOptions = Omit<WaveSurferOptions, 'container'>
  */
 export type WavesurferProps = PartialWavesurferOptions & OnWavesurferEvents
 
+
+/** Flatten nested plain option values so effect deps compare by value, not object identity. */
+function flattenOptionEntries(value: unknown, path = ''): unknown[] {
+  if (value !== null && typeof value === 'object') {
+    if (Array.isArray(value)) {
+      return value.flatMap((item, index) => flattenOptionEntries(item, path ? `${path}.${index}` : String(index)))
+    }
+    // Plain objects only — leave class instances / DOM nodes / functions as opaque refs
+    const proto = Object.getPrototypeOf(value)
+    if (proto === Object.prototype || proto === null) {
+      return Object.entries(value as Record<string, unknown>).flatMap(([key, nested]) =>
+        flattenOptionEntries(nested, path ? `${path}.${key}` : key),
+      )
+    }
+  }
+  return path ? [path, value] : [value]
+}
+
 /**
  * Use wavesurfer instance
  */
@@ -46,7 +64,12 @@ function useWavesurferInstance(
     const { plugins, ...rest } = options
     return rest
   }, [options])
-  const flatOptions = useMemo(() => Object.entries(optionsWithoutPlugins).flat(), [optionsWithoutPlugins])
+  // Deep-flatten nested option values (e.g. fetchParams) so identity-unstable
+  // plain objects do not recreate the player every render (#4226).
+  const flatOptions = useMemo(
+    () => Object.entries(optionsWithoutPlugins).flatMap(([key, value]) => flattenOptionEntries(value, key)),
+    [optionsWithoutPlugins],
+  )
 
   // Create a wavesurfer instance
   useEffect(() => {
