@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals'
 import * as React from 'react'
 import WaveSurfer from 'wavesurfer.js'
-import { render } from '@testing-library/react'
+import { act, render } from '@testing-library/react'
 import WavesurferPlayer from '../dist/index'
 
 describe('@wavesurfer/react tests', () => {
@@ -112,4 +112,66 @@ describe('@wavesurfer/react tests', () => {
     // Restore original mock
     WaveSurfer.create.mockImplementation(originalMock)
   })
+
+  it('should not recreate the player when nested option object identity changes but values stay equal', () => {
+    let setTick
+    function Harness() {
+      const [, tick] = React.useState(0)
+      setTick = tick
+      // Inline nested object — new reference every render
+      return React.createElement(WavesurferPlayer, {
+        waveColor: 'purple',
+        fetchParams: { credentials: 'include', mode: 'cors' },
+      })
+    }
+
+    render(React.createElement(Harness))
+    const createsAfterMount = WaveSurfer.create.mock.calls.length
+
+    // Force several re-renders with fresh nested object identities
+    for (let i = 0; i < 5; i++) {
+      act(() => {
+        setTick((n) => n + 1)
+      })
+    }
+
+    expect(WaveSurfer.create.mock.calls.length).toBe(createsAfterMount)
+  })
+
+  describe('nested option leaf changes recreate the player', () => {
+    function renderWithPeaks(initial) {
+      const { rerender } = render(React.createElement(WavesurferPlayer, { waveColor: 'purple', peaks: initial }))
+      const before = WaveSurfer.create.mock.calls.length
+      return {
+        update: (peaks) => rerender(React.createElement(WavesurferPlayer, { waveColor: 'purple', peaks })),
+        creates: () => WaveSurfer.create.mock.calls.length - before,
+      }
+    }
+
+    it('detects an appended nested leaf', () => {
+      const { update, creates } = renderWithPeaks([[0.1]])
+      update([[0.1, 0.2]])
+      expect(creates()).toBe(1)
+      expect(WaveSurfer.create.mock.lastCall[0].peaks).toEqual([[0.1, 0.2]])
+    })
+
+    it('detects a removed nested leaf', () => {
+      const { update, creates } = renderWithPeaks([[0.1, 0.2]])
+      update([[0.1]])
+      expect(creates()).toBe(1)
+    })
+
+    it('detects a changed nested leaf', () => {
+      const { update, creates } = renderWithPeaks([[0.1, 0.2]])
+      update([[0.1, 0.3]])
+      expect(creates()).toBe(1)
+    })
+
+    it('does not recreate for an equal fresh nested array', () => {
+      const { update, creates } = renderWithPeaks([[0.1, 0.2]])
+      update([[0.1, 0.2]])
+      expect(creates()).toBe(0)
+    })
+  })
+
 })
